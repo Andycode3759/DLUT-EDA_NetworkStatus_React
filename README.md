@@ -21,22 +21,6 @@ npm run build
 npm run preview
 ```
 
-## 背景图轮换
-
-### 添加背景图
-1. 将背景图放入 `public/background/` 目录
-2. 运行以下命令自动更新配置：
-   ```bash
-   npm run update-backgrounds
-   ```
-3. 刷新网页即可看到随机背景图
-
-支持的图片格式：JPG, JPEG, PNG, WEBP, GIF, BMP
-
-> **注意**：背景图会在每次刷新页面时随机更换，目前不支持定时自动轮播。
-
-> 注意：`public/background/ReadMe.txt` 会被自动忽略，可以在此放置说明文件。
-
 ## 功能特性
 
 - 实时显示网络连接状态

@@ -22,7 +22,16 @@ function backgroundImagesIndexPlugin() {
   return {
     name: 'background-images-index',
     configureServer(server) {
-      server.middlewares.use(`/${BACKGROUND_INDEX_FILE}`, (_req, res) => {
+      server.middlewares.use((req, res, next) => {
+        const requestPath = req.url ? req.url.split('?')[0] : '';
+        const rootPath = `/${BACKGROUND_INDEX_FILE}`;
+        const basePath = `${server.config.base}${BACKGROUND_INDEX_FILE}`;
+
+        if (requestPath !== rootPath && requestPath !== basePath) {
+          next();
+          return;
+        }
+
         const body = JSON.stringify(getBackgroundImages());
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');

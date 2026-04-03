@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const BACKGROUND_INDEX_URL = '/background-images.json';
+const BACKGROUND_INDEX_URL = `${import.meta.env.BASE_URL}background-images.json`;
 
 // 将候选图打散，失败时可按顺序重试不同图片
 function shuffleImages(images) {
