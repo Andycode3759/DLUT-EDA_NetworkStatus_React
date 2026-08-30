@@ -8,7 +8,7 @@ import { useLayoutEffect } from 'react';
 import './App.css';
 
 function App() {
-  const { data } = useNetworkStatus();
+  const { data, bannerMessage, dismissBanner } = useNetworkStatus();
   const currentBackground = useBackgroundRotation();
 
   // 使用 useLayoutEffect 在 DOM 绘制前设置背景，避免首屏闪烁
@@ -24,6 +24,13 @@ function App() {
 
   return (
     <>
+      {bannerMessage && (
+        <div className="maintenance-banner">
+          <span>{bannerMessage}</span>
+          <button className="banner-close" onClick={dismissBanner}>&times;</button>
+        </div>
+      )}
+
       <div className="content-wrapper">
         <h2 className="network-status-title">
           本机校园网状态

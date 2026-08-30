@@ -1,9 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { formatBytes, formatMacAddress, formatFee, checkUserAgent } from '../utils/formatters';
+import { MAINTENANCE_NOTICE } from '../config/notices';
 
 export function useNetworkStatus() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [bannerMessage, setBannerMessage] = useState(null);
+  const hasCheckedFlow = useRef(false);
+
+  const dismissBanner = useCallback(() => {
+    setBannerMessage(null);
+  }, []);
 
   const loadData = useCallback(() => {
     if (isLoading) return;
@@ -33,6 +40,15 @@ export function useNetworkStatus() {
         let parsedData = JSON.parse(jsonText);
 
         parsedData.terminalType = checkUserAgent(navigator.userAgent);
+
+        // 首次请求时检查 olflow 是否异常（仅在通知开启时检查）
+        if (MAINTENANCE_NOTICE.enabled && !hasCheckedFlow.current) {
+          hasCheckedFlow.current = true;
+          const olflow = parsedData.olflow;
+          if (olflow > 162529280 || olflow < 0) {
+            setBannerMessage(MAINTENANCE_NOTICE.message);
+          }
+        }
 
         // 格式化数据
         const formattedData = {
@@ -67,5 +83,13 @@ export function useNetworkStatus() {
     return () => clearInterval(interval);
   }, []);
 
-  return { data, loadData };
+  // 横幅自动关闭
+  useEffect(() => {
+    if (bannerMessage) {
+      const timer = setTimeout(() => setBannerMessage(null), MAINTENANCE_NOTICE.duration);
+      return () => clearTimeout(timer);
+    }
+  }, [bannerMessage]);
+
+  return { data, loadData, bannerMessage, dismissBanner };
 }
