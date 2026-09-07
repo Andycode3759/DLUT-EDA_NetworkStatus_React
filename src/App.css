@@ -57,10 +57,12 @@ h2 {
 
 table {
   border-collapse: collapse;
-  width: auto;
+  width: 340px;
   margin: 0 auto;
   border-radius: 10px;
   overflow: hidden;
+  /* 固定列宽，避免 reveal 切换文本长度时整列宽度跳动 */
+  table-layout: fixed;
 }
 
 th, td {
@@ -71,12 +73,13 @@ th, td {
 }
 
 td:nth-child(2) {
-  min-width: 125px;
+  width: 220px;
 }
 
 th {
   text-align: center;
   vertical-align: middle;
+  width: 125px;
 }
 
 tr:nth-child(even) {
@@ -119,6 +122,39 @@ button {
 
 button:hover {
   background-color: #45a049;
+}
+
+.reveal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: 26px;
+  height: 1rem;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  padding: 0 8px 0 0;
+}
+
+.reveal-btn:hover {
+  background: transparent;
+}
+
+.info-value-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.info-value {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .footer {

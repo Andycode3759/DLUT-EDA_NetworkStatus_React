@@ -1,3 +1,62 @@
+import { useState } from 'react';
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+
+function maskName(value) {
+  if (!value) return '-';
+  const chars = [...String(value)];
+  if (chars.length <= 1) return '*';
+  if (chars.length === 2) return `${chars[0]}*`;
+  if (chars.length === 3) return `${chars[0]}**`;
+  return `${chars[0]}${'*'.repeat(Math.min(3, chars.length - 1))}`;
+}
+
+function maskIp(value) {
+  if (!value) return '-';
+  const parts = String(value).split('.');
+  if (parts.length !== 4) return value;
+  return `${parts[0]}.${parts[1]}.**.**`;
+}
+
+function maskMac(value) {
+  if (!value) return '-';
+  const parts = String(value).split('-');
+  if (parts.length < 5) return value;
+  return [parts[0], parts[1], '**', '**', '**', parts[parts.length - 1]].join('-');
+}
+
+function ValueWithReveal({ value, mask }) {
+  const [revealed, setRevealed] = useState(false);
+  const hasValue = value != null && value !== '' && value !== '-';
+
+  return (
+    <span className="info-value-row">
+      {hasValue && (
+        <button
+          className="reveal-btn"
+          onClick={() => setRevealed((r) => !r)}
+          title={revealed ? '隐藏' : '显示完整信息'}
+          aria-label={revealed ? '隐藏' : '显示完整信息'}
+        >
+          {revealed ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+        </button>
+      )}
+      <span className="info-value">{hasValue ? (revealed ? value : mask(value)) : '-'}</span>
+    </span>
+  );
+}
+
+function Field({ icon, label, children }) {
+  return (
+    <div className="info-item">
+      <span className="info-icon">{icon}</span>
+      <div className="info-body">
+        <span className="info-label">{label}</span>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function NetworkTable({ data }) {
   return (
     <table>
@@ -17,7 +76,7 @@ function NetworkTable({ data }) {
         </tr>
         <tr>
           <th>姓名</th>
-          <td id="name">{data?.result === 1 ? data?.name : '-'}</td>
+          <td id="name"><ValueWithReveal value={data?.result ? data?.name : '-'} mask={maskName} /></td>
         </tr>
         <tr>
           <th>剩余流量</th>
@@ -33,11 +92,11 @@ function NetworkTable({ data }) {
         </tr>
         <tr>
           <th>IP 地址</th>
-          <td id="ipAddress">{data?.result === 1 ? data?.ipAddress : '-'}</td>
+          <td id="ipAddress"><ValueWithReveal value={data?.result ? data?.ipAddress : '-'} mask={maskIp} /></td>
         </tr>
         <tr>
           <th>MAC 地址</th>
-          <td id="macAddress">{data?.result === 1 ? data?.macAddress : '-'}</td>
+          <td id="macAddress"><ValueWithReveal value={data?.result ? data?.macAddress : '-'} mask={maskMac} /></td>
         </tr>
       </tbody>
     </table>
